@@ -9,8 +9,9 @@ export const INDIA_MAINLAND_PATH =
 
 /** Representative points (lon, lat) → same projection as path */
 export const FOOTPRINT_MARKERS = {
-  rajasthan: { label: 'Rajasthan', cx: 155.4, cy: 282.9, fill: '#e8b82a', filter: 'glowRaj' as const },
+  rajasthan: { label: 'Dholpur', cx: 171.8, cy: 291.3, fill: '#e8b82a', filter: 'glowRaj' as const },
   delhiNcr: { label: 'Delhi NCR', cx: 180.7, cy: 252.6, fill: '#5eead4', filter: 'glowDelhi' as const },
+  gurgaonHaryana: { label: 'Gurgaon', cx: 174.6, cy: 258.9, fill: '#34d399', filter: 'glowDelhi' as const },
   uttarPradesh: { label: 'Uttar Pradesh', cx: 247.2, cy: 284.1, fill: '#60a5fa', filter: 'glowUP' as const },
   /** Chennai — Tamil Nadu hub */
   chennai: { label: 'Chennai', cx: 235.2, cy: 529.0, fill: '#f472b6', filter: 'glowChennai' as const },

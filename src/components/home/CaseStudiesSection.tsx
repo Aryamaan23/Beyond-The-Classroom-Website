@@ -34,7 +34,7 @@ function CaseStudiesSection({ variant = 'default' }: CaseStudiesSectionProps) {
     <section
       className={`relative overflow-hidden ${
         isFeatured
-          ? 'py-20 sm:py-24 md:py-32 bg-gradient-to-b from-white via-primary-soft/30 to-cream-dark/80'
+          ? 'pt-8 sm:pt-10 md:pt-12 pb-20 sm:pb-24 md:pb-28 bg-gradient-to-b from-white via-primary-soft/30 to-cream-dark/80'
           : 'py-16 sm:py-20 md:py-28 bg-white'
       }`}
       aria-labelledby="case-studies-heading"
@@ -54,7 +54,7 @@ function CaseStudiesSection({ variant = 'default' }: CaseStudiesSectionProps) {
         />
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`text-center ${isFeatured ? 'mb-14 sm:mb-16' : 'mb-10 sm:mb-12'}`}>
+        <div className={`text-center ${isFeatured ? 'mb-8 sm:mb-10' : 'mb-10 sm:mb-12'}`}>
           <span
             className={`inline-block text-secondary font-semibold tracking-wider uppercase mb-3 ${
               isFeatured ? 'text-sm sm:text-base' : 'text-sm'
