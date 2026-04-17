@@ -245,22 +245,22 @@ const Navigation: React.FC<NavigationProps> = () => {
         }`}
       >
         <div
-          className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"
+          className="absolute inset-0 bg-slate-950/70 backdrop-blur-[3px]"
           onClick={() => setIsMenuOpen(false)}
           aria-hidden="true"
         />
 
         <div
-          className={`absolute right-0 top-0 h-full w-[min(100%,20rem)] max-w-[85vw] bg-white shadow-xl border-l border-slate-200 transform transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-[min(100%,20rem)] max-w-[85vw] bg-gradient-to-b from-slate-900 via-primary-dark to-slate-900 text-white shadow-2xl border-l border-white/10 transform transition-transform duration-300 ease-out ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
-          <div className="flex items-center justify-between px-4 py-4 border-b border-slate-200 bg-slate-50/50">
+          <div className="flex items-center justify-between px-4 py-4 border-b border-white/10 bg-white/5">
             <img src="/images/logo.png" alt="" className="h-9 w-auto" />
             <button
               type="button"
               onClick={() => setIsMenuOpen(false)}
-              className="p-2 rounded-lg text-slate-600 hover:bg-slate-200/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
+              className="p-2 rounded-lg text-white/90 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary transition-colors"
               aria-label="Close menu"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -273,10 +273,10 @@ const Navigation: React.FC<NavigationProps> = () => {
             <button
               type="button"
               onClick={() => setIsAboutMenuOpen((prev) => !prev)}
-              className={`w-full text-left px-4 py-3 rounded-lg text-[15px] font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset ${
+              className={`w-full text-left px-4 py-3 rounded-lg text-[15px] font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-inset ${
                 isAboutActive
-                  ? 'text-primary bg-primary-soft border border-primary/10'
-                  : 'text-slate-700 hover:bg-slate-50 border border-transparent'
+                  ? 'text-white bg-secondary/20 border border-secondary/40'
+                  : 'text-white/90 hover:bg-white/10 border border-white/10'
               }`}
               aria-expanded={isAboutMenuOpen}
               aria-controls="mobile-about-submenu"
@@ -307,10 +307,10 @@ const Navigation: React.FC<NavigationProps> = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`block px-4 py-3 rounded-lg text-[15px] font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset ${
+                className={`block px-4 py-3 rounded-lg text-[15px] font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-inset ${
                   isActive(link.path)
-                    ? 'text-primary bg-primary-soft border border-primary/10'
-                    : 'text-slate-700 hover:bg-slate-50 border border-transparent'
+                    ? 'text-white bg-secondary/20 border border-secondary/40'
+                    : 'text-white/90 hover:bg-white/10 border border-white/10'
                 }`}
               >
                 {link.label}
@@ -330,7 +330,7 @@ const Navigation: React.FC<NavigationProps> = () => {
             ) : (
               <Link
                 to="/publications/editor"
-                className="flex items-center justify-center gap-2 mx-0 mt-3 py-3 rounded-lg text-[15px] font-semibold text-primary border-2 border-primary/30 bg-primary-soft/60 hover:bg-primary-soft transition-colors"
+                className="flex items-center justify-center gap-2 mx-0 mt-3 py-3 rounded-lg text-[15px] font-semibold text-white border-2 border-secondary/55 bg-secondary/30 hover:bg-secondary/40 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path
@@ -345,7 +345,7 @@ const Navigation: React.FC<NavigationProps> = () => {
             )}
             <Link
               to="/contact"
-              className="block mx-0 mt-3 py-3 rounded-lg text-center text-[15px] font-semibold text-white bg-primary hover:bg-primary-dark shadow-sm transition-colors border border-primary-dark/10"
+              className="block mx-0 mt-3 py-3 rounded-lg text-center text-[15px] font-semibold text-primary-dark bg-secondary hover:bg-secondary-light shadow-sm transition-colors border border-secondary-dark/30"
             >
               Get Involved
             </Link>
