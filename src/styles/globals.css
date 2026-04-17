@@ -1,0 +1,317 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary - vivid blue */
+  --color-primary: #175a9c;
+  --color-primary-dark: #0f3d6b;
+  --color-primary-light: #2a7bc8;
+  --color-primary-soft: #e8f2fc;
+  
+  /* Secondary - bright gold */
+  --color-secondary: #d4a017;
+  --color-secondary-dark: #b8890f;
+  --color-secondary-light: #e8b82a;
+  --color-secondary-soft: #fdf8e8;
+  
+  /* Neutral */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-800: #1F2937;
+  --color-gray-900: #111827;
+  
+  /* Semantic */
+  --color-success: #10B981;
+  --color-error: #EF4444;
+
+  /* Font Family */
+  --font-family: 'Plus Jakarta Sans', 'Poppins', system-ui, sans-serif;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* Spacing */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Responsive Typography - Ensure readability at all screen sizes */
+html {
+  font-size: 16px;
+}
+
+/* Mobile: Base font size */
+@media (max-width: 767px) {
+  html {
+    font-size: 14px;
+  }
+  
+  /* Ensure minimum touch target size for mobile */
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    min-height: 44px;
+  }
+}
+
+/* Tablet: Slightly larger */
+@media (min-width: 768px) and (max-width: 1023px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* Desktop: Standard size */
+@media (min-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Ensure smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improve text readability */
+body {
+  line-height: 1.65;
+  color: #374151;
+  background-color: #faf8f3;
+  background-image:
+    radial-gradient(circle at 8% 0%, rgba(23, 90, 156, 0.12), transparent 42%),
+    radial-gradient(circle at 92% 8%, rgba(212, 160, 23, 0.14), transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(13, 148, 136, 0.08), transparent 50%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 55%, #faf8f3 100%);
+  background-attachment: fixed;
+}
+
+/* Focus visible for keyboard navigation - 2px solid outline for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Enhanced focus indicators for interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(23, 90, 156, 0.14);
+}
+
+/* Skip to main content link - accessible but hidden until focused */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+  font-weight: 600;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-to-main:focus {
+  top: 0;
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* Ensure images are responsive by default */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Smoother text selection styling across all pages */
+::selection {
+  background: rgba(23, 90, 156, 0.22);
+  color: #0f172a;
+}
+
+/* Consistent visual polish for content sections */
+section {
+  position: relative;
+  scroll-margin-top: 96px;
+}
+
+/* Elegant section separator line for major section headings */
+h1 + p,
+h2 + p {
+  text-wrap: balance;
+}
+
+/* Prevent horizontal scroll on mobile */
+body {
+  overflow-x: hidden;
+}
+
+/* Performance optimizations for animations */
+/* Only animate transform and opacity for 60fps performance */
+* {
+  /* Use GPU acceleration for transforms and opacity */
+  will-change: auto;
+}
+
+/* Optimize rendering for animated elements */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-on-scroll,
+  [style*="animation"] {
+    /* Force GPU acceleration */
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
+}
+
+/* Optimize animations for 60fps */
+@media (prefers-reduced-motion: no-preference) {
+  .hover-lift {
+    transition: transform 300ms ease-in-out, box-shadow 300ms ease-in-out;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-8px);
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Smooth transitions for interactive elements */
+button,
+a,
+.card,
+.hover-scale {
+  transition-property: transform, box-shadow, background-color, border-color, color;
+  transition-timing-function: ease-in-out;
+  transition-duration: 200ms;
+}
+
+/* Hardware acceleration for better performance */
+.page-transition,
+.card,
+button,
+a {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Keyframe animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation utility classes */
+.animate-fadeIn {
+  animation: fadeIn 300ms ease-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 300ms ease-out;
+}

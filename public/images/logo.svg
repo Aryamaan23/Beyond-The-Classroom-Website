@@ -1,0 +1,6 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="60" fill="transparent"/>
+  <circle cx="30" cy="30" r="20" fill="#2563EB"/>
+  <path d="M25 30L28 33L35 26" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="60" y="35" font-family="Poppins, sans-serif" font-size="18" font-weight="600" fill="#1F2937">Beyond the Classroom</text>
+</svg>

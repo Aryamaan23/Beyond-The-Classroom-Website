@@ -1,0 +1,9 @@
+export { default as HeroSection } from './HeroSection';
+export { default as FounderMessageSection } from './FounderMessageSection';
+export { default as HighlightsSection } from './HighlightsSection';
+export { default as ImpactSnapshot } from './ImpactSnapshot';
+export { default as CollaborationsSection } from './CollaborationsSection';
+export { default as ActionHubSection } from './ActionHubSection';
+export { default as PortfolioSection } from './PortfolioSection';
+export { default as CaseStudiesSection } from './CaseStudiesSection';
+export { default as NewsletterSection } from './NewsletterSection';
