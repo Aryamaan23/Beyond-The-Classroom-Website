@@ -12,6 +12,12 @@ export default defineConfig({
     {
       name: 'mock-api',
       configureServer(server) {
+        const mockStoredFiles: Record<string, { fileName: string; mimeType: string; base64Data: string }> = {};
+        const mockStoredAttachments: Record<
+          string,
+          { caseStudyId: string; fileName: string; mimeType: string; base64Data: string }
+        > = {};
+
         const mockCaseStudies = [
           {
             id: 'case-1',
@@ -22,8 +28,16 @@ export default defineConfig({
               'Initial report capturing observations from block-level institutions and recommendations for youth participation in district planning.',
             submittedAt: new Date().toISOString(),
             fileId: 'mock-file-1',
-            fileUrl: 'https://drive.google.com/drive/folders/15weJWQB_XV1E8taXq9K8r07KEF-AabS1',
+            fileUrl: '/api/case-studies?action=download&caseStudyId=case-1',
             fileName: 'dholpur-sample-report.pdf',
+            attachments: [
+              {
+                id: 'mock-attachment-1',
+                name: 'dholpur-field-photos.zip',
+                url: '/api/case-studies?action=download&caseStudyId=case-1&attachmentId=mock-attachment-1',
+                mimeType: 'application/zip',
+              },
+            ],
           },
         ];
         const mockEditors = [
@@ -147,6 +161,47 @@ export default defineConfig({
           }
 
           if (req.method === 'GET') {
+            const rawUrl = req.url || '';
+            const incoming = new URL(rawUrl, 'http://localhost:5173');
+            if (incoming.searchParams.get('action') === 'download') {
+              const caseStudyId = incoming.searchParams.get('caseStudyId') || 'case-study';
+              const attachmentId = incoming.searchParams.get('attachmentId');
+              if (attachmentId) {
+                const storedAttachment = mockStoredAttachments[attachmentId];
+                if (!storedAttachment || storedAttachment.caseStudyId !== caseStudyId) {
+                  res.statusCode = 404;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ success: false, error: 'Attachment not found in mock storage' }));
+                  return;
+                }
+
+                const attachmentBuffer = Buffer.from(storedAttachment.base64Data, 'base64');
+                res.statusCode = 200;
+                res.setHeader('Content-Type', storedAttachment.mimeType || 'application/octet-stream');
+                res.setHeader(
+                  'Content-Disposition',
+                  `attachment; filename="${storedAttachment.fileName.replace(/"/g, '')}"`
+                );
+                res.end(attachmentBuffer);
+                return;
+              }
+
+              const storedFile = mockStoredFiles[caseStudyId];
+              if (!storedFile) {
+                res.statusCode = 404;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: false, error: 'Case study file not found in mock storage' }));
+                return;
+              }
+
+              const caseStudyBuffer = Buffer.from(storedFile.base64Data, 'base64');
+              res.statusCode = 200;
+              res.setHeader('Content-Type', storedFile.mimeType || 'application/octet-stream');
+              res.setHeader('Content-Disposition', `attachment; filename="${storedFile.fileName.replace(/"/g, '')}"`);
+              res.end(caseStudyBuffer);
+              return;
+            }
+
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ success: true, caseStudies: mockCaseStudies }));
@@ -187,6 +242,30 @@ export default defineConfig({
                 return;
               }
 
+              if (data.action === 'delete') {
+                const caseStudyId = String(data.caseStudyId || '').trim();
+                if (!caseStudyId) {
+                  res.statusCode = 400;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ success: false, error: 'Missing caseStudyId for delete' }));
+                  return;
+                }
+
+                const index = mockCaseStudies.findIndex((item) => item.id === caseStudyId);
+                if (index === -1) {
+                  res.statusCode = 404;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ success: false, error: 'Case study not found' }));
+                  return;
+                }
+
+                mockCaseStudies.splice(index, 1);
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true }));
+                return;
+              }
+
               if (!isEditor) {
                 res.statusCode = 401;
                 res.setHeader('Content-Type', 'application/json');
@@ -214,9 +293,38 @@ export default defineConfig({
                 summary: data.summary.trim(),
                 submittedAt: new Date().toISOString(),
                 fileId: `mock-${id}`,
-                fileUrl: 'https://drive.google.com/drive/folders/15weJWQB_XV1E8taXq9K8r07KEF-AabS1',
+                fileUrl: `/api/case-studies?action=download&caseStudyId=${id}`,
                 fileName: data.fileName.trim(),
+                attachments: Array.isArray(data.attachments)
+                  ? data.attachments
+                      .filter((item) => item?.fileName && item?.base64Data)
+                      .map((item, index) => ({
+                        id: `mock-att-${id}-${index + 1}`,
+                        name: String(item.fileName).trim(),
+                        url: `/api/case-studies?action=download&caseStudyId=${id}&attachmentId=mock-att-${id}-${index + 1}`,
+                        mimeType: String(item.mimeType || 'application/octet-stream'),
+                      }))
+                  : [],
               };
+
+              mockStoredFiles[id] = {
+                fileName: data.fileName.trim(),
+                mimeType: String(data.mimeType || 'application/octet-stream'),
+                base64Data: String(data.base64Data || ''),
+              };
+
+              if (Array.isArray(data.attachments)) {
+                data.attachments.forEach((item, index) => {
+                  if (!item?.fileName || !item?.base64Data) return;
+                  const attachmentId = `mock-att-${id}-${index + 1}`;
+                  mockStoredAttachments[attachmentId] = {
+                    caseStudyId: id,
+                    fileName: String(item.fileName).trim(),
+                    mimeType: String(item.mimeType || 'application/octet-stream'),
+                    base64Data: String(item.base64Data || ''),
+                  };
+                });
+              }
 
               mockCaseStudies.unshift(created);
               res.statusCode = 200;

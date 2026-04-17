@@ -98,4 +98,12 @@ export interface CaseStudy {
   fileId: string;
   fileUrl: string;
   fileName: string;
+  attachments?: CaseStudyAttachment[];
+}
+
+export interface CaseStudyAttachment {
+  id: string;
+  name: string;
+  url: string;
+  mimeType: string;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 export interface NavigationProps {
@@ -7,16 +7,23 @@ export interface NavigationProps {
 
 const Navigation: React.FC<NavigationProps> = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAboutMenuOpen, setIsAboutMenuOpen] = useState(false);
+  const [isAboutDesktopOpen, setIsAboutDesktopOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const aboutMenuRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
 
   const navLinks = [
     { path: '/', label: 'Home' },
-    { path: '/about', label: 'About' },
     { path: '/programs', label: 'Programs' },
     { path: '/publications', label: 'Publications' },
     { path: '/media', label: 'Media' },
     { path: '/partner', label: 'Partner With Us' },
+  ];
+  const aboutLinks = [
+    { path: '/about', label: 'About Overview' },
+    { path: '/about/mentors', label: 'Our Mentors' },
+    { path: '/about/messages', label: 'Founders / Co-founder / ED Message' },
   ];
 
   useEffect(() => {
@@ -27,15 +34,31 @@ const Navigation: React.FC<NavigationProps> = () => {
 
   useEffect(() => {
     setIsMenuOpen(false);
+    setIsAboutMenuOpen(false);
+    setIsAboutDesktopOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isMenuOpen) setIsMenuOpen(false);
+      if (e.key === 'Escape') {
+        if (isMenuOpen) setIsMenuOpen(false);
+        setIsAboutDesktopOpen(false);
+      }
     };
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isMenuOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!aboutMenuRef.current) return;
+      if (!aboutMenuRef.current.contains(event.target as Node)) {
+        setIsAboutDesktopOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
@@ -45,6 +68,7 @@ const Navigation: React.FC<NavigationProps> = () => {
   }, [isMenuOpen]);
 
   const isActive = (path: string) => location.pathname === path;
+  const isAboutActive = location.pathname.startsWith('/about');
 
   const navShell = scrolled
     ? 'bg-white/98 shadow-[0_1px_0_0_rgba(15,61,107,0.06),0_8px_24px_-8px_rgba(15,61,107,0.12)]'
@@ -75,6 +99,45 @@ const Navigation: React.FC<NavigationProps> = () => {
           </Link>
 
           <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
+            <div className="relative group" ref={aboutMenuRef}>
+              <button
+                type="button"
+                onClick={() => setIsAboutDesktopOpen((prev) => !prev)}
+                onMouseEnter={() => setIsAboutDesktopOpen(true)}
+                className={`px-3.5 py-2 rounded-lg text-[14px] lg:text-[15px] font-medium tracking-tight transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+                  isAboutActive
+                    ? 'text-primary bg-primary-soft/90 border border-primary/15 shadow-sm'
+                    : 'text-slate-600 hover:text-primary hover:bg-slate-50/90 border border-transparent'
+                }`}
+                aria-haspopup="menu"
+                aria-expanded={isAboutDesktopOpen}
+              >
+                About
+                <span className="ml-1.5 text-xs">▾</span>
+              </button>
+              <div
+                className={`absolute left-0 top-full z-20 mt-2 w-72 rounded-xl border border-slate-200 bg-white/98 p-2 shadow-xl transition-all duration-200 ${
+                  isAboutDesktopOpen
+                    ? 'visible opacity-100 pointer-events-auto'
+                    : 'pointer-events-none invisible opacity-0'
+                }`}
+              >
+                {aboutLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setIsAboutDesktopOpen(false)}
+                    className={`block rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                      isActive(link.path)
+                        ? 'bg-primary-soft text-primary font-semibold'
+                        : 'text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -90,8 +153,23 @@ const Navigation: React.FC<NavigationProps> = () => {
             ))}
             <div className="ml-3 lg:ml-4 h-6 w-px bg-slate-200/90" aria-hidden="true" />
             <Link
+              to="/publications/editor"
+              className="hidden md:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13px] xl:text-[14px] font-semibold text-primary border-2 border-primary/30 bg-primary-soft/50 hover:bg-primary-soft hover:border-primary/50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              title="Editor login for case study uploads"
+            >
+              <svg className="w-4 h-4 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+              Editor login
+            </Link>
+            <Link
               to="/contact"
-              className="ml-2 lg:ml-3 px-5 py-2.5 rounded-lg text-[14px] lg:text-[15px] font-semibold text-white bg-primary hover:bg-primary-dark shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-primary-dark/10"
+              className="ml-1 lg:ml-2 px-5 py-2.5 rounded-lg text-[14px] lg:text-[15px] font-semibold text-white bg-primary hover:bg-primary-dark shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-primary-dark/10"
             >
               Get Involved
             </Link>
@@ -148,6 +226,39 @@ const Navigation: React.FC<NavigationProps> = () => {
           </div>
 
           <div className="px-3 py-4 space-y-0.5">
+            <button
+              type="button"
+              onClick={() => setIsAboutMenuOpen((prev) => !prev)}
+              className={`w-full text-left px-4 py-3 rounded-lg text-[15px] font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset ${
+                isAboutActive
+                  ? 'text-primary bg-primary-soft border border-primary/10'
+                  : 'text-slate-700 hover:bg-slate-50 border border-transparent'
+              }`}
+              aria-expanded={isAboutMenuOpen}
+              aria-controls="mobile-about-submenu"
+            >
+              <span className="flex items-center justify-between">
+                <span>About</span>
+                <span className="text-xs">{isAboutMenuOpen ? '▴' : '▾'}</span>
+              </span>
+            </button>
+            {isAboutMenuOpen ? (
+              <div id="mobile-about-submenu" className="ml-3 mt-1 space-y-1 border-l border-slate-200 pl-2">
+                {aboutLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`block px-3 py-2 rounded-lg text-sm ${
+                      isActive(link.path)
+                        ? 'text-primary bg-primary-soft/80 font-semibold'
+                        : 'text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            ) : null}
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -162,8 +273,22 @@ const Navigation: React.FC<NavigationProps> = () => {
               </Link>
             ))}
             <Link
+              to="/publications/editor"
+              className="flex items-center justify-center gap-2 mx-0 mt-3 py-3 rounded-lg text-[15px] font-semibold text-primary border-2 border-primary/30 bg-primary-soft/60 hover:bg-primary-soft transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+              Editor login
+            </Link>
+            <Link
               to="/contact"
-              className="block mx-0 mt-4 py-3 rounded-lg text-center text-[15px] font-semibold text-white bg-primary hover:bg-primary-dark shadow-sm transition-colors border border-primary-dark/10"
+              className="block mx-0 mt-3 py-3 rounded-lg text-center text-[15px] font-semibold text-white bg-primary hover:bg-primary-dark shadow-sm transition-colors border border-primary-dark/10"
             >
               Get Involved
             </Link>

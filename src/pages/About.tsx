@@ -1,5 +1,6 @@
-import { MissionVision, Timeline, TeamSection } from '../components/about';
+import { MissionVision, Timeline, TeamSection, type TeamMember } from '../components/about';
 import { PageTransition } from '../components/common';
+import { ORG_INSTAGRAM, linkedinSearchUrl } from '../data/teamSocialDefaults';
 
 // Actual organizational content
 const missionData = {
@@ -35,44 +36,89 @@ const timelineEvents = [
   }
 ];
 
-const teamMembers = [
+/** Replace `linkedinSearchUrl(...)` results with each person’s `/in/...` URL when you have them. */
+const teamMembers: TeamMember[] = [
   {
-    name: "Harsimran Passi",
-    role: "Founder & Director",
-    photo: "/images/team/harsimran-passi.png",
+    name: 'Harsimran Passi',
+    role: 'Founder & Managing Director',
+    photo: '/images/team/harsimran-passi.png',
     socialLinks: {
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com",
-      instagram: "https://instagram.com"
-    }
+      linkedin: 'https://www.linkedin.com/in/harsimran-passi/',
+      instagram: ORG_INSTAGRAM,
+    },
   },
   {
-    name: "Aparajita Jha",
-    role: "Co-founder",
-    photo: "/images/team/aparajita-jha.png",
+    name: 'Aparajita Jha',
+    role: 'Co-Founder',
+    photo: '/images/team/aparajita-jha.png',
     socialLinks: {
-      linkedin: "https://linkedin.com",
-      instagram: "https://instagram.com"
-    }
+      linkedin: linkedinSearchUrl('Aparajita Jha'),
+      instagram: ORG_INSTAGRAM,
+    },
   },
   {
-    name: "Aryamaan Pandey",
-    role: "Executive Director",
-    photo: "/images/team/aryamaan-pandey.png",
+    name: 'Aryamaan Pandey',
+    role: 'Executive Director',
+    photo: '/images/team/aryamaan-pandey.png',
     socialLinks: {
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com"
-    }
+      linkedin: linkedinSearchUrl('Aryamaan Pandey'),
+      instagram: ORG_INSTAGRAM,
+    },
   },
   {
-    name: "Krishna Mishra",
-    role: "Marketing Director",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
+    name: 'Noyal Jonnalagadda',
+    role: 'Chief Technology Officer',
+    photo: '/images/team/noyal-jonnalagadda.png',
     socialLinks: {
-      linkedin: "https://linkedin.com",
-      instagram: "https://instagram.com"
-    }
-  }
+      linkedin: linkedinSearchUrl('Noyal Jonnalagadda'),
+      instagram: ORG_INSTAGRAM,
+    },
+  },
+  {
+    name: 'Krishna Mishra',
+    role: 'Marketing Lead',
+    photo: '/images/team/krishna-mishra.png',
+    socialLinks: {
+      linkedin: linkedinSearchUrl('Krishna Mishra'),
+      instagram: ORG_INSTAGRAM,
+    },
+  },
+  {
+    name: 'Utkarsh Gupta',
+    role: "Founder's Office",
+    photo: '/images/team/utkarsh-gupta.png',
+    socialLinks: {
+      linkedin: linkedinSearchUrl('Utkarsh Gupta'),
+      instagram: ORG_INSTAGRAM,
+    },
+  },
+  {
+    name: 'Tanuj Samaddar',
+    role: 'State Program Lead (Delhi)',
+    photo: '/images/team/tanuj-samaddar.png',
+    socialLinks: {
+      linkedin: linkedinSearchUrl('Tanuj Samaddar'),
+      instagram: ORG_INSTAGRAM,
+    },
+  },
+  {
+    name: 'Sahanasri Ashok',
+    role: 'State Program Lead (Tamil Nadu)',
+    photo: '/images/team/sahanasri-ashok.png',
+    socialLinks: {
+      linkedin: linkedinSearchUrl('Sahanasri Ashok'),
+      instagram: ORG_INSTAGRAM,
+    },
+  },
+  {
+    name: 'Meetangi Juneja',
+    role: 'Social Media Lead',
+    photo: '/images/team/meetangi-juneja.png',
+    socialLinks: {
+      linkedin: linkedinSearchUrl('Meetangi Juneja'),
+      instagram: ORG_INSTAGRAM,
+    },
+  },
 ];
 
 function About() {
@@ -85,10 +131,10 @@ function About() {
           vision={missionData.vision}
           description={missionData.description}
         />
-        
+
         <Timeline events={timelineEvents} />
         
-        <TeamSection fallbackMembers={teamMembers} />
+        <TeamSection members={teamMembers} />
       </div>
     </PageTransition>
   );

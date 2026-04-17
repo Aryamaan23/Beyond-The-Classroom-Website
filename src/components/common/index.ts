@@ -6,6 +6,7 @@ export { default as ScrollToTop } from './ScrollToTop';
 export { default as PageTransition } from './PageTransition';
 export { default as PageHero } from './PageHero';
 export { default as LazyImage } from './LazyImage';
+export { default as ProgramsSlideshow } from './ProgramsSlideshow';
 
 export type { ButtonProps } from './Button';
 export type { CardProps } from './Card';

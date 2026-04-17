@@ -42,6 +42,16 @@ export const collaborations = [
         logo: '/images/collaborations/break-the-ice.png',
         url: '',
       },
+      {
+        name: 'Public Policy India',
+        logo: '/images/collaborations/public-policy-india.png',
+        url: 'https://www.linkedin.com/company/public-policy-india/',
+      },
+      {
+        name: '180 Degrees Consulting',
+        logo: '/images/collaborations/180-degrees-consulting.png',
+        url: 'https://180dc.org/',
+      },
     ],
   },
   {
@@ -103,8 +113,6 @@ export const founderMessages = [
     name: 'Aparajita Jha',
     role: 'Co-founder',
     photo: '/images/team/aparajita-jha.png',
-    portraitRound: true,
-    photoPosition: 'top' as const,
     message: 'As co-founder, I believe in creating spaces where young people can discover their voice and purpose. Beyond the Classroom is more than a programme — it is a community where ambition meets opportunity, and every participant becomes a part of something larger than themselves.',
   },
   {
@@ -112,6 +120,25 @@ export const founderMessages = [
     role: 'Executive Director',
     photo: '/images/team/aryamaan-pandey.png',
     message: 'Leadership isn’t built in conference rooms — it’s forged on the ground. Our work at Beyond the Classroom is about creating pathways for young people who have the drive but lack the structured exposure. Together with our partners and communities, we are building India’s next generation of grounded, policy-aware, action-oriented leaders.',
+  },
+];
+
+export const mentors = [
+  {
+    name: 'Public Policy India',
+    role: 'Knowledge Partner',
+    logo: '/images/collaborations/public-policy-india.png',
+    description:
+      'Mentorship and policy-learning support for students exploring public systems, governance, and civic leadership.',
+    url: 'https://www.linkedin.com/company/public-policy-india/',
+  },
+  {
+    name: '180 Degrees Consulting',
+    role: 'Impact Consulting Mentor',
+    logo: '/images/collaborations/180-degrees-consulting.png',
+    description:
+      'Structured consulting exposure and practical problem-solving pathways for youth entering impact careers.',
+    url: 'https://180dc.org/',
   },
 ];
 
@@ -315,46 +342,48 @@ export const podcastEpisodes = [
 
 export const programs = [
   {
-    title: 'On-Ground Impact',
-    description: 'Hands-on projects and upskilling workshops delivered in schools, colleges, and communities. These practical programs bridge the gap between education and employability, ensuring students gain real, actionable skills.',
-    image: '/images/programs/upskilling.jpg',
-    ctaText: 'Join a Project',
-    ctaLink: '/contact',
-    features: [
-      'Financial Literacy',
-      'Digital Literacy',
-      'Civic & Public Policy',
-      'Women\'s Health & Hygiene',
-      'Career Readiness',
-      'Communication Skills'
-    ]
-  },
-  {
-    title: 'Leadership Development',
-    description: 'Dialogues, summits, and mentorship programs designed to develop clarity, confidence, and capacity to drive change. We nurture the next generation of ethical, resilient, and impact-driven leaders.',
-    image: '/images/programs/leadership.jpg',
-    ctaText: 'Apply for Fellowship',
-    ctaLink: '/contact',
-    features: [
-      'Leadership Fellowships',
-      'Youth Summits & Dialogues',
-      '1:1 Mentorship from Industry Leaders',
-      'Impact Consulting Challenges',
-      'Community Innovation Projects'
-    ]
-  },
-  {
-    title: 'Bharat Yuva Capacity Building Programme 2026',
-    description: 'A flagship initiative by Beyond the Classroom in collaboration with ACIC-SGT University and Government of Rajasthan to build grounded, policy-aware, and action-oriented youth leaders.',
+    title: 'Dholpur Drive and District Immersion',
+    description:
+      'An intensive district-level learning programme that places youth in real governance and community contexts across Dholpur. Participants engage with local institutions and convert field observations into practical action plans.',
     image: '/images/programs/bharat-yuva-2026-1.png',
-    ctaText: 'View Program Details',
+    ctaText: 'Explore Immersion',
+    ctaLink: '/contact',
+    features: [
+      'District Office and Panchayat Exposure',
+      'Field Problem Mapping and Documentation',
+      'Community Conversations with Stakeholders',
+      'Policy Observation and Reflection Notes',
+      'Action Plan Presentation and Feedback'
+    ]
+  },
+  {
+    title: 'Bharat Yuva Capacity Building Programme',
+    description:
+      'A flagship capacity-building pathway by Beyond the Classroom in collaboration with ACIC-SGT University and Government partners. The programme develops policy-aware, grounded, and execution-focused youth leaders.',
+    image: '/images/programs/bharat-yuva-2026-1.png',
+    ctaText: 'View Programme',
     ctaLink: '/programs/bharat-yuva-2026',
     features: [
-      'Governance & Public Policy Foundations',
-      'District Administration Exposure',
-      'Grassroots Problem Solving',
-      'Leadership & Communication Mastery',
-      'Real-world Case Simulations'
+      'Governance and Public Policy Foundations',
+      'District Administration and Systems Exposure',
+      'Leadership and Communication Labs',
+      'Grassroots Problem Solving Simulations',
+      'Mentoring by Practitioners and Experts'
+    ]
+  },
+  {
+    title: 'Udayan Care Initiative',
+    description:
+      'A focused initiative designed with Udayan Care to strengthen youth readiness through mentorship, life-skills, and career-direction support. The programme emphasizes confidence, continuity, and long-term pathways.',
+    image: '/images/programs/bharat-yuva-2026-1.png',
+    ctaText: 'Know More',
+    ctaLink: '/contact',
+    features: [
+      'Mentorship and Personal Guidance',
+      'Career and Employability Readiness',
+      'Life Skills and Decision-Making Support',
+      'Leadership Orientation Workshops',
+      'Community Participation and Reflection'
     ]
   }
 ];

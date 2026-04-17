@@ -15,11 +15,18 @@ type UploadCaseStudyInput = {
   program: string;
   summary: string;
   file: File;
+  attachments?: File[];
   editorEmail: string;
   editorPassword: string;
 };
 
 type EditorAuthInput = {
+  editorEmail: string;
+  editorPassword: string;
+};
+
+type DeleteCaseStudyInput = {
+  caseStudyId: string;
   editorEmail: string;
   editorPassword: string;
 };
@@ -72,6 +79,13 @@ export async function fetchCaseStudies(): Promise<CaseStudyApiResponse> {
 export async function uploadCaseStudy(data: UploadCaseStudyInput): Promise<CaseStudyApiResponse> {
   try {
     const base64Data = await fileToBase64(data.file);
+    const encodedAttachments = await Promise.all(
+      (data.attachments || []).map(async (attachment) => ({
+        fileName: attachment.name,
+        mimeType: attachment.type || 'application/octet-stream',
+        base64Data: await fileToBase64(attachment),
+      }))
+    );
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
@@ -86,6 +100,7 @@ export async function uploadCaseStudy(data: UploadCaseStudyInput): Promise<CaseS
         fileName: data.file.name,
         mimeType: data.file.type || 'application/octet-stream',
         base64Data,
+        attachments: encodedAttachments,
         editorEmail: data.editorEmail,
         editorPassword: data.editorPassword,
       }),
@@ -132,6 +147,40 @@ export async function authenticateCaseStudyEditor(
       return {
         success: false,
         error: result.error || 'Authentication failed',
+      };
+    }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Network error',
+    };
+  }
+}
+
+export async function deleteCaseStudy(data: DeleteCaseStudyInput): Promise<CaseStudyApiResponse> {
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'delete',
+        caseStudyId: data.caseStudyId,
+        editorEmail: data.editorEmail,
+        editorPassword: data.editorPassword,
+      }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      return {
+        success: false,
+        error: result.error || 'Delete failed',
       };
     }
 

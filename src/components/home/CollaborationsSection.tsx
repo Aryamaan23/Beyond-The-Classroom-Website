@@ -93,24 +93,24 @@ function CollaborationsSection() {
             if (logoRow) {
               return (
                 <div key={partnerKey(partner)} className="w-full">
-                  <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 sm:gap-x-8 sm:gap-y-8 justify-items-center">
+                  <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-6 sm:gap-x-10 sm:gap-y-10 justify-items-center">
                     {partner.logoRow.map((item, logoIndex) => {
                       const label = (
-                        <span className="mx-auto max-w-[14rem] text-center text-sm font-semibold leading-snug text-gray-600 transition-colors group-hover:text-primary">
+                        <span className="mx-auto max-w-[12rem] text-center text-sm font-bold leading-snug text-gray-700 transition-colors group-hover:text-primary">
                           {item.name}
                         </span>
                       );
                       const logoBlock = (
-                        <div className="mx-auto flex h-28 w-full max-w-[200px] items-center justify-center sm:h-32 sm:max-w-[220px]">
+                        <div className="mx-auto flex h-28 w-full max-w-[190px] items-center justify-center sm:h-32 sm:max-w-[200px]">
                           <img
                             src={item.logo}
                             alt={item.name}
-                            className="max-h-full w-auto max-w-[200px] object-contain object-center transition-transform duration-300 group-hover:scale-[1.03] group-focus-visible:scale-[1.03] sm:max-w-[220px]"
+                            className="max-h-full w-auto max-w-[180px] object-contain object-center transition-transform duration-300 group-hover:scale-[1.03] group-focus-visible:scale-[1.03] sm:max-w-[190px]"
                           />
                         </div>
                       );
                       const inner = (
-                        <div className="flex w-full flex-col items-center justify-center gap-3 text-center">
+                        <div className="flex w-full flex-col items-center justify-center gap-4 text-center">
                           {logoBlock}
                           {label}
                         </div>
@@ -164,7 +164,7 @@ function CollaborationsSection() {
                       />
                     </div>
                     <span
-                      className={`mt-2 text-center text-xs font-semibold leading-snug text-gray-600 sm:text-sm ${
+                      className={`mt-3 text-center text-xs font-bold leading-snug text-gray-700 sm:text-sm ${
                         wideMid ? 'max-w-[18rem] px-1' : 'max-w-[11rem]'
                       }`}
                     >
@@ -208,7 +208,7 @@ function CollaborationsSection() {
                   }}
                 >
                   <div
-                    className="flex w-full max-w-5xl flex-row flex-wrap items-center justify-center gap-10 sm:gap-14 md:gap-16"
+                    className="flex w-full max-w-5xl flex-row flex-wrap items-center justify-center gap-12 sm:gap-16 md:gap-20"
                     role="list"
                   >
                     {partner.rowLogos.map((item, logoIndex) => (
@@ -242,7 +242,7 @@ function CollaborationsSection() {
             };
 
             const label = (
-              <span className="mx-auto max-w-[16rem] text-center text-sm font-semibold leading-snug text-gray-600 transition-colors group-hover:text-primary">
+              <span className="mx-auto max-w-[16rem] text-center text-sm font-bold leading-snug text-gray-700 transition-colors group-hover:text-primary">
                 {std.name}
               </span>
             );
@@ -266,7 +266,7 @@ function CollaborationsSection() {
             );
 
             const inner = (
-              <div className="flex w-full flex-col items-center justify-center gap-3 text-center">
+              <div className="flex w-full flex-col items-center justify-center gap-4 text-center">
                 {logoBlock}
                 {label}
               </div>

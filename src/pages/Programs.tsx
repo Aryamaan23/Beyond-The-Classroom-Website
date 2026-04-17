@@ -9,11 +9,11 @@ function Programs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <PageHero
             title="Our Programs"
-            description="Explore our on-ground upskilling projects and leadership development programs designed to empower young people and women to create lasting impact."
+            description="Discover our three flagship initiatives: Dholpur Drive and District Immersion, Bharat Yuva Capacity Building Programme, and the Udayan Care Initiative."
           />
 
           {/* Program Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12 items-stretch">
             {programs.map((program, index) => (
               <ProgramCard
                 key={index}

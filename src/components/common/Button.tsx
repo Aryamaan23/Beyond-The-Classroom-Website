@@ -50,8 +50,11 @@ const Button: React.FC<ButtonProps> = ({
 
   // Render as link if href is provided
   if (href) {
+    const isApiDownload = href.startsWith('/api/');
+    const isExternal = href.startsWith('http') || href.startsWith('mailto') || isApiDownload;
+
     // External link
-    if (href.startsWith('http') || href.startsWith('mailto')) {
+    if (isExternal) {
       return (
         <a
           href={href}

@@ -5,5 +5,6 @@ export { default as ImpactSnapshot } from './ImpactSnapshot';
 export { default as CollaborationsSection } from './CollaborationsSection';
 export { default as ActionHubSection } from './ActionHubSection';
 export { default as PortfolioSection } from './PortfolioSection';
+export { default as FootprintMapSection } from './FootprintMapSection';
 export { default as CaseStudiesSection } from './CaseStudiesSection';
 export { default as NewsletterSection } from './NewsletterSection';
