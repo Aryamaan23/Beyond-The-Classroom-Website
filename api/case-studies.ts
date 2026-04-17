@@ -27,6 +27,13 @@ type CaseStudyMetaFile = {
   createdTime?: string;
 };
 
+type InMemoryStoredFile = {
+  id: string;
+  name: string;
+  mimeType: string;
+  data: Buffer;
+};
+
 const DRIVE_FOLDER_ID = process.env.CASE_STUDIES_DRIVE_FOLDER_ID || '15weJWQB_XV1E8taXq9K8r07KEF-AabS1';
 const LOCAL_KEY_FILE =
   process.env.GOOGLE_SERVICE_ACCOUNT_KEY_FILE ||
@@ -56,6 +63,9 @@ const DEFAULT_EDITOR_CREDENTIALS: EditorCredential[] = [
       '735258d1b3312e5dabada4624c05d3179086ee797543655bfeefd132f8a9c861975b5d1fa5bf0a25b60d63a22eb5938a097817489dc248fa76dfd0e815cff6c6',
   },
 ];
+
+const inMemoryCaseStudies: CaseStudyRecord[] = [];
+const inMemoryFiles = new Map<string, InMemoryStoredFile>();
 
 function json(res: VercelResponse, status: number, payload: unknown) {
   res.status(status).setHeader('Content-Type', 'application/json');
@@ -106,14 +116,38 @@ function requiredEnv() {
   return null;
 }
 
-async function getDriveClient() {
-  const env = requiredEnv();
-  if (!env) return null;
+type OAuthDriveConfig = {
+  clientId: string;
+  clientSecret: string;
+  refreshToken: string;
+};
 
+function oauthEnv(): OAuthDriveConfig | null {
+  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+  const refreshToken = process.env.GOOGLE_OAUTH_REFRESH_TOKEN;
+  if (!clientId || !clientSecret || !refreshToken) return null;
+  return { clientId, clientSecret, refreshToken };
+}
+
+async function getDriveClient() {
   const { google } = await import('googleapis');
+  const oauth = oauthEnv();
+  if (oauth) {
+    const auth = new google.auth.OAuth2({
+      clientId: oauth.clientId,
+      clientSecret: oauth.clientSecret,
+    });
+    auth.setCredentials({ refresh_token: oauth.refreshToken });
+    return google.drive({ version: 'v3', auth });
+  }
+
+  const serviceAccount = requiredEnv();
+  if (!serviceAccount) return null;
+
   const auth = new google.auth.JWT({
-    email: env.clientEmail,
-    key: env.privateKey,
+    email: serviceAccount.clientEmail,
+    key: serviceAccount.privateKey,
     scopes: ['https://www.googleapis.com/auth/drive'],
   });
   return google.drive({ version: 'v3', auth });
@@ -281,6 +315,17 @@ async function findCaseStudyAndMeta(drive: any, caseStudyId: string): Promise<{ 
   return null;
 }
 
+function findInMemoryCaseStudy(caseStudyId: string): CaseStudyRecord | null {
+  return inMemoryCaseStudies.find((item) => item.id === caseStudyId) || null;
+}
+
+function inMemoryDownload(res: VercelResponse, file: InMemoryStoredFile) {
+  res.status(200);
+  res.setHeader('Content-Type', file.mimeType || 'application/octet-stream');
+  res.setHeader('Content-Disposition', `attachment; filename="${file.name.replace(/"/g, '')}"`);
+  return res.send(file.data);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCors(res);
 
@@ -289,13 +334,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const drive = await getDriveClient();
-  if (!drive) {
-    return json(res, 500, {
-      success: false,
-      error:
-        'Google Drive credentials are not configured. Set GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.',
-    });
-  }
+  const useInMemoryFallback = !drive;
 
   if (req.method === 'GET') {
     try {
@@ -306,35 +345,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return json(res, 400, { success: false, error: 'Missing caseStudyId' });
         }
 
-        const matched = await findCaseStudyAndMeta(drive, caseStudyId);
-        if (!matched) {
-          return json(res, 404, { success: false, error: 'Case study not found' });
+        if (useInMemoryFallback) {
+          const caseStudy = findInMemoryCaseStudy(caseStudyId);
+          if (!caseStudy) return json(res, 404, { success: false, error: 'Case study not found' });
+          const attachments = Array.isArray(caseStudy.attachments) ? caseStudy.attachments : [];
+          const targetAttachment = attachmentId ? attachments.find((item) => item.id === attachmentId) : null;
+          const targetFileId = targetAttachment ? targetAttachment.id : caseStudy.fileId;
+          const targetFile = inMemoryFiles.get(targetFileId);
+          if (!targetFile) return json(res, 404, { success: false, error: 'File not found' });
+          return inMemoryDownload(res, targetFile);
+        } else {
+          const matched = await findCaseStudyAndMeta(drive, caseStudyId);
+          if (!matched) {
+            return json(res, 404, { success: false, error: 'Case study not found' });
+          }
+
+          const { caseStudy } = matched;
+          const attachments = Array.isArray(caseStudy.attachments) ? caseStudy.attachments : [];
+          const targetAttachment = attachmentId ? attachments.find((item) => item.id === attachmentId) : null;
+
+          const targetFileId = targetAttachment ? targetAttachment.id : caseStudy.fileId;
+          const downloadName = targetAttachment?.name || caseStudy.fileName || 'case-study-file';
+
+          const fileStreamResponse = await drive.files.get(
+            {
+              fileId: targetFileId,
+              alt: 'media',
+              supportsAllDrives: true,
+            },
+            { responseType: 'stream' }
+          );
+
+          res.status(200);
+          res.setHeader('Content-Type', 'application/octet-stream');
+          res.setHeader('Content-Disposition', `attachment; filename="${downloadName.replace(/"/g, '')}"`);
+          fileStreamResponse.data.pipe(res);
+          return;
         }
-
-        const { caseStudy } = matched;
-        const attachments = Array.isArray(caseStudy.attachments) ? caseStudy.attachments : [];
-        const targetAttachment = attachmentId ? attachments.find((item) => item.id === attachmentId) : null;
-
-        const targetFileId = targetAttachment ? targetAttachment.id : caseStudy.fileId;
-        const downloadName = targetAttachment?.name || caseStudy.fileName || 'case-study-file';
-
-        const fileStreamResponse = await drive.files.get(
-          {
-            fileId: targetFileId,
-            alt: 'media',
-            supportsAllDrives: true,
-          },
-          { responseType: 'stream' }
-        );
-
-        res.status(200);
-        res.setHeader('Content-Type', 'application/octet-stream');
-        res.setHeader('Content-Disposition', `attachment; filename="${downloadName.replace(/"/g, '')}"`);
-        fileStreamResponse.data.pipe(res);
-        return;
       }
 
-      const caseStudies = await listCaseStudies(drive);
+      const caseStudies = useInMemoryFallback ? inMemoryCaseStudies : await listCaseStudies(drive);
       return json(res, 200, { success: true, caseStudies });
     } catch (error) {
       return json(res, 500, {
@@ -377,23 +427,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return json(res, 400, { success: false, error: 'Missing caseStudyId for delete' });
       }
 
-      const matched = await findCaseStudyAndMeta(drive, caseStudyId);
-      if (!matched) {
-        return json(res, 404, { success: false, error: 'Case study not found' });
-      }
+      if (useInMemoryFallback) {
+        const index = inMemoryCaseStudies.findIndex((item) => item.id === caseStudyId);
+        if (index === -1) {
+          return json(res, 404, { success: false, error: 'Case study not found' });
+        }
+        const existing = inMemoryCaseStudies[index];
+        const attachments = Array.isArray(existing.attachments) ? existing.attachments : [];
+        inMemoryFiles.delete(existing.fileId);
+        attachments.forEach((item) => inMemoryFiles.delete(item.id));
+        inMemoryCaseStudies.splice(index, 1);
+      } else {
+        const matched = await findCaseStudyAndMeta(drive, caseStudyId);
+        if (!matched) {
+          return json(res, 404, { success: false, error: 'Case study not found' });
+        }
 
-      const attachments = Array.isArray(matched.caseStudy.attachments) ? matched.caseStudy.attachments : [];
-      const filesToDelete = [matched.caseStudy.fileId, ...attachments.map((item) => item.id), matched.metaFileId];
+        const attachments = Array.isArray(matched.caseStudy.attachments) ? matched.caseStudy.attachments : [];
+        const filesToDelete = [matched.caseStudy.fileId, ...attachments.map((item) => item.id), matched.metaFileId];
 
-      for (const fileId of filesToDelete) {
-        if (!fileId) continue;
-        try {
-          await drive.files.delete({
-            fileId,
-            supportsAllDrives: true,
-          });
-        } catch {
-          // Continue deleting remaining files.
+        for (const fileId of filesToDelete) {
+          if (!fileId) continue;
+          try {
+            await drive.files.delete({
+              fileId,
+              supportsAllDrives: true,
+            });
+          } catch {
+            // Continue deleting remaining files.
+          }
         }
       }
 
@@ -424,35 +486,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return json(res, 400, { success: false, error: 'Uploaded file is empty or invalid' });
     }
 
-    const uploadName = `${Date.now()}-${fileName.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-    const uploaded = await drive.files.create({
-      requestBody: {
-        name: uploadName,
-        parents: [DRIVE_FOLDER_ID],
-      },
-      supportsAllDrives: true,
-      media: {
-        mimeType,
-        body: Readable.from(binary),
-      },
-      fields: 'id,name',
-    });
-
-    const fileId = uploaded.data.id as string;
     const nowIso = new Date().toISOString();
     const id = `case-${Date.now()}`;
+    const fileId = `file-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-    try {
-      await drive.permissions.create({
-        fileId,
-        supportsAllDrives: true,
-        requestBody: {
-          role: 'reader',
-          type: 'anyone',
-        },
+    let persistedFileId = fileId;
+    if (useInMemoryFallback) {
+      inMemoryFiles.set(fileId, {
+        id: fileId,
+        name: fileName.trim(),
+        mimeType: mimeType || 'application/octet-stream',
+        data: binary,
       });
-    } catch {
-      // If permission fails, file remains in Drive for internal access.
+    } else {
+      const uploadName = `${Date.now()}-${fileName.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const uploaded = await drive.files.create({
+        requestBody: {
+          name: uploadName,
+          parents: [DRIVE_FOLDER_ID],
+        },
+        supportsAllDrives: true,
+        media: {
+          mimeType,
+          body: Readable.from(binary),
+        },
+        fields: 'id,name',
+      });
+      persistedFileId = uploaded.data.id as string;
+      try {
+        await drive.permissions.create({
+          fileId: persistedFileId,
+          supportsAllDrives: true,
+          requestBody: {
+            role: 'reader',
+            type: 'anyone',
+          },
+        });
+      } catch {
+        // If permission fails, file remains in Drive for internal access.
+      }
     }
 
     const caseStudy: CaseStudyRecord = {
@@ -462,7 +534,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       program: program.trim(),
       summary: summary.trim(),
       submittedAt: nowIso,
-      fileId,
+      fileId: persistedFileId,
       fileUrl: makeDownloadUrl(id),
       fileName: fileName.trim(),
       attachments: [],
@@ -482,32 +554,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const attachmentBinary = Buffer.from(attachment.base64Data, 'base64');
       if (!attachmentBinary.length) continue;
 
-      const attachmentName = `${Date.now()}-${attachment.fileName.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-      const uploadedAttachment = await drive.files.create({
-        requestBody: {
-          name: attachmentName,
-          parents: [DRIVE_FOLDER_ID],
-        },
-        supportsAllDrives: true,
-        media: {
-          mimeType: attachment.mimeType,
-          body: Readable.from(attachmentBinary),
-        },
-        fields: 'id,name',
-      });
-
-      const attachmentId = uploadedAttachment.data.id as string;
-      try {
-        await drive.permissions.create({
-          fileId: attachmentId,
-          supportsAllDrives: true,
-          requestBody: {
-            role: 'reader',
-            type: 'anyone',
-          },
+      let attachmentId = `att-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      if (useInMemoryFallback) {
+        inMemoryFiles.set(attachmentId, {
+          id: attachmentId,
+          name: attachment.fileName,
+          mimeType: attachment.mimeType || 'application/octet-stream',
+          data: attachmentBinary,
         });
-      } catch {
-        // Keep attachments private if permission update fails.
+      } else {
+        const attachmentName = `${Date.now()}-${attachment.fileName.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const uploadedAttachment = await drive.files.create({
+          requestBody: {
+            name: attachmentName,
+            parents: [DRIVE_FOLDER_ID],
+          },
+          supportsAllDrives: true,
+          media: {
+            mimeType: attachment.mimeType,
+            body: Readable.from(attachmentBinary),
+          },
+          fields: 'id,name',
+        });
+        attachmentId = uploadedAttachment.data.id as string;
+        try {
+          await drive.permissions.create({
+            fileId: attachmentId,
+            supportsAllDrives: true,
+            requestBody: {
+              role: 'reader',
+              type: 'anyone',
+            },
+          });
+        } catch {
+          // Keep attachments private if permission update fails.
+        }
       }
 
       caseStudy.attachments?.push({
@@ -518,18 +599,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    await drive.files.create({
-      requestBody: {
-        name: `case-study-meta-${id}.json`,
-        parents: [DRIVE_FOLDER_ID],
-        mimeType: 'application/json',
-      },
-      supportsAllDrives: true,
-      media: {
-        mimeType: 'application/json',
-        body: JSON.stringify(caseStudy),
-      },
-    });
+    if (useInMemoryFallback) {
+      inMemoryCaseStudies.unshift(caseStudy);
+    } else {
+      await drive.files.create({
+        requestBody: {
+          name: `case-study-meta-${id}.json`,
+          parents: [DRIVE_FOLDER_ID],
+          mimeType: 'application/json',
+        },
+        supportsAllDrives: true,
+        media: {
+          mimeType: 'application/json',
+          body: JSON.stringify(caseStudy),
+        },
+      });
+    }
 
     return json(res, 200, { success: true, caseStudy });
   } catch (error) {
