@@ -101,18 +101,15 @@ const Navigation: React.FC<NavigationProps> = () => {
   };
 
   const navShell = scrolled
-    ? 'bg-white shadow-[0_1px_0_0_rgba(15,61,107,0.06),0_8px_24px_-8px_rgba(15,61,107,0.12)]'
-    : 'bg-white';
+    ? 'bg-white shadow-[0_1px_0_0_rgba(15,61,107,0.08),0_10px_30px_-10px_rgba(15,61,107,0.18)]'
+    : 'bg-white shadow-[0_1px_0_0_rgba(15,61,107,0.08),0_8px_24px_-12px_rgba(15,61,107,0.16)]';
 
   return (
     <nav
-      className={`sticky top-0 z-50 border-b border-slate-200/80 transition-all duration-300 ${navShell} backdrop-blur-xl`}
+      className={`sticky top-0 z-50 border-b border-slate-200 transition-all duration-300 ${navShell}`}
       aria-label="Main navigation"
     >
-      <div
-        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary/50 to-transparent opacity-80"
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-white -z-10" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-[4.5rem]">
