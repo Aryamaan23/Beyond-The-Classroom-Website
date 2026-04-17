@@ -10,6 +10,9 @@ const Mentors = lazy(() => import('./pages/Mentors'))
 const LeadershipMessages = lazy(() => import('./pages/LeadershipMessages'))
 const Programs = lazy(() => import('./pages/Programs'))
 const BharatYuva2026 = lazy(() => import('./pages/BharatYuva2026'))
+const UdayanCareInitiative = lazy(() => import('./pages/UdayanCareInitiative'))
+const ChennaiSummit180dc = lazy(() => import('./pages/ChennaiSummit180dc'))
+const DholpurDrive = lazy(() => import('./pages/DholpurDrive'))
 const Media = lazy(() => import('./pages/Media'))
 const Publications = lazy(() => import('./pages/Publications'))
 const CaseStudyEditor = lazy(() => import('./pages/CaseStudyEditor'))
@@ -45,7 +48,10 @@ function App() {
               <Route path="/about/mentors" element={<Mentors />} />
               <Route path="/about/messages" element={<LeadershipMessages />} />
               <Route path="/programs" element={<Programs />} />
+              <Route path="/programs/dholpur-drive" element={<DholpurDrive />} />
               <Route path="/programs/bharat-yuva-2026" element={<BharatYuva2026 />} />
+              <Route path="/programs/udayan-care-initiative" element={<UdayanCareInitiative />} />
+              <Route path="/programs/180dc-chennai-summit" element={<ChennaiSummit180dc />} />
               <Route path="/media" element={<Media />} />
               <Route path="/publications" element={<Publications />} />
               <Route path="/publications/editor" element={<CaseStudyEditor />} />

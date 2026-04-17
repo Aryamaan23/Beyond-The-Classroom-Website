@@ -345,9 +345,9 @@ export const programs = [
     title: 'Dholpur Drive and District Immersion',
     description:
       'An intensive district-level learning programme that places youth in real governance and community contexts across Dholpur. Participants engage with local institutions and convert field observations into practical action plans.',
-    image: '/images/programs/bharat-yuva-2026-1.png',
+    image: '/images/programs/dholpur-drive/01.png',
     ctaText: 'Explore Immersion',
-    ctaLink: '/contact',
+    ctaLink: '/programs/dholpur-drive',
     features: [
       'District Office and Panchayat Exposure',
       'Field Problem Mapping and Documentation',
@@ -375,9 +375,9 @@ export const programs = [
     title: 'Udayan Care Initiative',
     description:
       'A focused initiative designed with Udayan Care to strengthen youth readiness through mentorship, life-skills, and career-direction support. The programme emphasizes confidence, continuity, and long-term pathways.',
-    image: '/images/programs/bharat-yuva-2026-1.png',
+    image: '/images/programs/udayan-care/01.png',
     ctaText: 'Know More',
-    ctaLink: '/contact',
+    ctaLink: '/programs/udayan-care-initiative',
     features: [
       'Mentorship and Personal Guidance',
       'Career and Employability Readiness',
@@ -390,9 +390,9 @@ export const programs = [
     title: '180 Degrees Consulting SRMIST KTR Chennai Summit',
     description:
       'A summit-led leadership and consulting exposure initiative in Chennai, designed to connect youth with problem-solving frameworks, impact consulting perspectives, and collaborative action.',
-    image: '/images/programs/bharat-yuva-2026-1.png',
-    ctaText: 'View Summit Highlights',
-    ctaLink: '/media',
+    image: '/images/programs/180dc-chennai/01.png',
+    ctaText: 'Know More',
+    ctaLink: '/programs/180dc-chennai-summit',
     features: [
       'Summit Sessions with Practitioners',
       'Youth Consulting and Case Discussions',

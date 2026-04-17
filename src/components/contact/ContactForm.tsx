@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ContactFormData } from '../../types';
 import Button from '../common/Button';
-import { submitContactForm, validateContactForm } from '../../services/contactService';
+import { validateContactForm } from '../../services/contactService';
 
 interface FormErrors {
   name?: string;
@@ -11,13 +11,13 @@ interface FormErrors {
 }
 
 function ContactForm() {
+  const whatsappNumber = '917355949951';
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
     message: '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (
@@ -36,7 +36,7 @@ function ContactForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validate form data
@@ -46,32 +46,25 @@ function ContactForm() {
       return;
     }
 
-    setIsSubmitting(true);
     setErrors({});
 
-    try {
-      // Submit form to API
-      const result = await submitContactForm(formData);
+    const whatsappMessage = [
+      'Hello Beyond the Classroom,',
+      '',
+      `Name: ${formData.name}`,
+      `Email: ${formData.email}`,
+      '',
+      `Message: ${formData.message}`,
+    ].join('\n');
 
-      if (result.success) {
-        setIsSuccess(true);
-        setFormData({ name: '', email: '', message: '' });
-        
-        // Reset success message after 5 seconds
-        setTimeout(() => setIsSuccess(false), 5000);
-      } else {
-        // Handle API errors
-        setErrors({
-          general: result.error || 'Failed to send message. Please try again.',
-        });
-      }
-    } catch (error) {
-      setErrors({
-        general: 'An unexpected error occurred. Please try again later.',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(
+      whatsappMessage
+    )}&lang=en`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
+    setIsSuccess(true);
+    setFormData({ name: '', email: '', message: '' });
+    setTimeout(() => setIsSuccess(false), 5000);
   };
 
   return (
@@ -115,7 +108,6 @@ function ContactForm() {
                 : 'border-gray-300'
             }`}
             placeholder="Your name"
-            disabled={isSubmitting}
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -142,7 +134,6 @@ function ContactForm() {
                 : 'border-gray-300'
             }`}
             placeholder="your.email@example.com"
-            disabled={isSubmitting}
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -169,7 +160,6 @@ function ContactForm() {
                 : 'border-gray-300'
             }`}
             placeholder="Tell us how we can help..."
-            disabled={isSubmitting}
           />
           {errors.message && (
             <p className="mt-1 text-sm text-red-600">{errors.message}</p>
@@ -181,9 +171,9 @@ function ContactForm() {
           variant="primary"
           size="lg"
           className="w-full"
-          onClick={handleSubmit}
+          type="submit"
         >
-          {isSubmitting ? 'Sending...' : 'Send Message'}
+          Send Message
         </Button>
       </form>
     </div>
