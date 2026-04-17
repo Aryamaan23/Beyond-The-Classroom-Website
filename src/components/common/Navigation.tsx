@@ -101,8 +101,8 @@ const Navigation: React.FC<NavigationProps> = () => {
   };
 
   const navShell = scrolled
-    ? 'bg-white/98 shadow-[0_1px_0_0_rgba(15,61,107,0.06),0_8px_24px_-8px_rgba(15,61,107,0.12)]'
-    : 'bg-white/90';
+    ? 'bg-white shadow-[0_1px_0_0_rgba(15,61,107,0.06),0_8px_24px_-8px_rgba(15,61,107,0.12)]'
+    : 'bg-white';
 
   return (
     <nav
@@ -222,7 +222,7 @@ const Navigation: React.FC<NavigationProps> = () => {
           <button
             type="button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex items-center justify-center p-2.5 rounded-lg text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="md:hidden inline-flex items-center justify-center p-2.5 rounded-lg text-black bg-white border border-slate-300 shadow-sm hover:bg-slate-100 hover:border-slate-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             aria-expanded={isMenuOpen}
             aria-label="Toggle navigation menu"
           >
@@ -251,7 +251,7 @@ const Navigation: React.FC<NavigationProps> = () => {
         />
 
         <div
-          className={`absolute right-0 top-0 h-full w-[min(100%,20rem)] max-w-[85vw] bg-gradient-to-b from-slate-900 via-primary-dark to-slate-900 text-white shadow-2xl border-l border-white/10 transform transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-[min(100%,20rem)] max-w-[85vw] bg-gradient-to-b from-[#081523] via-[#0b2340] to-[#081523] text-white shadow-2xl border-l border-white/15 transform transition-transform duration-300 ease-out ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
@@ -269,7 +269,7 @@ const Navigation: React.FC<NavigationProps> = () => {
             </button>
           </div>
 
-          <div className="px-3 py-4 space-y-0.5">
+          <div className="px-3 py-4 space-y-1">
             <button
               type="button"
               onClick={() => setIsAboutMenuOpen((prev) => !prev)}
@@ -287,15 +287,15 @@ const Navigation: React.FC<NavigationProps> = () => {
               </span>
             </button>
             {isAboutMenuOpen ? (
-              <div id="mobile-about-submenu" className="ml-3 mt-1 space-y-1 border-l border-slate-200 pl-2">
+              <div id="mobile-about-submenu" className="ml-3 mt-1 space-y-1 border-l border-white/20 pl-2">
                 {aboutLinks.map((link) => (
                   <Link
                     key={link.path}
                     to={link.path}
-                    className={`block px-3 py-2 rounded-lg text-sm ${
+                    className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                       isActive(link.path)
-                        ? 'text-primary bg-primary-soft/80 font-semibold'
-                        : 'text-slate-700 hover:bg-slate-50'
+                        ? 'text-white bg-secondary/25 border border-secondary/45'
+                        : 'text-white/85 hover:bg-white/10 border border-transparent'
                     }`}
                   >
                     {link.label}
