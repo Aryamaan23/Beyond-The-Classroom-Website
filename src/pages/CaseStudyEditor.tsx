@@ -11,6 +11,9 @@ import {
 import type { CaseStudy } from '../types';
 
 const FALLBACK_PROGRAM = 'Dholpur District Immersion Plan';
+const EDITOR_AUTH_STORAGE_KEY = 'btc_editor_logged_in';
+const EDITOR_EMAIL_STORAGE_KEY = 'btc_editor_email';
+const EDITOR_AUTH_EVENT = 'btc-editor-auth-changed';
 
 function CaseStudyEditor() {
   const [items, setItems] = useState<CaseStudy[]>([]);
@@ -60,6 +63,28 @@ function CaseStudyEditor() {
     void load();
   }, []);
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem(EDITOR_EMAIL_STORAGE_KEY);
+    if (savedEmail) {
+      setEditorEmail(savedEmail);
+    }
+
+    const syncFromStorage = () => {
+      const stillLoggedIn = localStorage.getItem(EDITOR_AUTH_STORAGE_KEY) === 'true';
+      if (!stillLoggedIn) {
+        setIsAuthenticated(false);
+        setEditorPassword('');
+      }
+    };
+
+    window.addEventListener('storage', syncFromStorage);
+    window.addEventListener(EDITOR_AUTH_EVENT, syncFromStorage);
+    return () => {
+      window.removeEventListener('storage', syncFromStorage);
+      window.removeEventListener(EDITOR_AUTH_EVENT, syncFromStorage);
+    };
+  }, []);
+
   const handleEditorLogin = async (e: FormEvent) => {
     e.preventDefault();
     setAuthError('');
@@ -82,6 +107,9 @@ function CaseStudyEditor() {
     }
 
     setIsAuthenticated(true);
+    localStorage.setItem(EDITOR_AUTH_STORAGE_KEY, 'true');
+    localStorage.setItem(EDITOR_EMAIL_STORAGE_KEY, editorEmail.trim());
+    window.dispatchEvent(new Event(EDITOR_AUTH_EVENT));
     setAuthError('');
   };
 

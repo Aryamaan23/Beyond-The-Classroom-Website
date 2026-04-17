@@ -6,9 +6,12 @@ export interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = () => {
+  const EDITOR_AUTH_STORAGE_KEY = 'btc_editor_logged_in';
+  const EDITOR_AUTH_EVENT = 'btc-editor-auth-changed';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAboutMenuOpen, setIsAboutMenuOpen] = useState(false);
   const [isAboutDesktopOpen, setIsAboutDesktopOpen] = useState(false);
+  const [isEditorLoggedIn, setIsEditorLoggedIn] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const aboutMenuRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
@@ -67,8 +70,35 @@ const Navigation: React.FC<NavigationProps> = () => {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    const syncEditorAuthState = () => {
+      setIsEditorLoggedIn(localStorage.getItem(EDITOR_AUTH_STORAGE_KEY) === 'true');
+    };
+
+    syncEditorAuthState();
+
+    const handleStorage = () => syncEditorAuthState();
+    const handleEditorAuthEvent = () => syncEditorAuthState();
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener(EDITOR_AUTH_EVENT, handleEditorAuthEvent);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener(EDITOR_AUTH_EVENT, handleEditorAuthEvent);
+    };
+  }, []);
+
   const isActive = (path: string) => location.pathname === path;
   const isAboutActive = location.pathname.startsWith('/about');
+
+  const handleEditorLogout = () => {
+    const confirmed = window.confirm('Are you sure you want to logout from the editor workspace?');
+    if (!confirmed) return;
+    localStorage.removeItem(EDITOR_AUTH_STORAGE_KEY);
+    localStorage.removeItem('btc_editor_email');
+    window.dispatchEvent(new Event(EDITOR_AUTH_EVENT));
+    setIsMenuOpen(false);
+  };
 
   const navShell = scrolled
     ? 'bg-white/98 shadow-[0_1px_0_0_rgba(15,61,107,0.06),0_8px_24px_-8px_rgba(15,61,107,0.12)]'
@@ -152,21 +182,35 @@ const Navigation: React.FC<NavigationProps> = () => {
               </Link>
             ))}
             <div className="ml-3 lg:ml-4 h-6 w-px bg-slate-200/90" aria-hidden="true" />
-            <Link
-              to="/publications/editor"
-              className="hidden md:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13px] xl:text-[14px] font-semibold text-primary border-2 border-primary/30 bg-primary-soft/50 hover:bg-primary-soft hover:border-primary/50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              title="Editor login for case study uploads"
-            >
-              <svg className="w-4 h-4 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-              Editor login
-            </Link>
+            {isEditorLoggedIn ? (
+              <button
+                type="button"
+                onClick={handleEditorLogout}
+                className="hidden md:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13px] xl:text-[14px] font-semibold text-rose-700 border-2 border-rose-300 bg-rose-50 hover:bg-rose-100 hover:border-rose-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
+                title="Logout from editor workspace"
+              >
+                <svg className="w-4 h-4 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1" />
+                </svg>
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/publications/editor"
+                className="hidden md:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13px] xl:text-[14px] font-semibold text-primary border-2 border-primary/30 bg-primary-soft/50 hover:bg-primary-soft hover:border-primary/50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                title="Editor login for case study uploads"
+              >
+                <svg className="w-4 h-4 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+                Editor login
+              </Link>
+            )}
             <Link
               to="/contact"
               className="ml-1 lg:ml-2 px-5 py-2.5 rounded-lg text-[14px] lg:text-[15px] font-semibold text-white bg-primary hover:bg-primary-dark shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-primary-dark/10"
@@ -272,20 +316,33 @@ const Navigation: React.FC<NavigationProps> = () => {
                 {link.label}
               </Link>
             ))}
-            <Link
-              to="/publications/editor"
-              className="flex items-center justify-center gap-2 mx-0 mt-3 py-3 rounded-lg text-[15px] font-semibold text-primary border-2 border-primary/30 bg-primary-soft/60 hover:bg-primary-soft transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-              Editor login
-            </Link>
+            {isEditorLoggedIn ? (
+              <button
+                type="button"
+                onClick={handleEditorLogout}
+                className="w-full flex items-center justify-center gap-2 mx-0 mt-3 py-3 rounded-lg text-[15px] font-semibold text-rose-700 border-2 border-rose-300 bg-rose-50 hover:bg-rose-100 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1" />
+                </svg>
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/publications/editor"
+                className="flex items-center justify-center gap-2 mx-0 mt-3 py-3 rounded-lg text-[15px] font-semibold text-primary border-2 border-primary/30 bg-primary-soft/60 hover:bg-primary-soft transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+                Editor login
+              </Link>
+            )}
             <Link
               to="/contact"
               className="block mx-0 mt-3 py-3 rounded-lg text-center text-[15px] font-semibold text-white bg-primary hover:bg-primary-dark shadow-sm transition-colors border border-primary-dark/10"
