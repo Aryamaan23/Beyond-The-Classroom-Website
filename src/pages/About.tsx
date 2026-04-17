@@ -1,6 +1,6 @@
 import { MissionVision, Timeline, TeamSection, type TeamMember } from '../components/about';
 import { PageTransition } from '../components/common';
-import { ORG_INSTAGRAM, linkedinSearchUrl } from '../data/teamSocialDefaults';
+import { ORG_INSTAGRAM, ORG_LINKEDIN, linkedinSearchUrl } from '../data/teamSocialDefaults';
 
 // Actual organizational content
 const missionData = {
@@ -43,7 +43,7 @@ const teamMembers: TeamMember[] = [
     role: 'Founder & Managing Director',
     photo: '/images/team/harsimran-passi.png',
     socialLinks: {
-      linkedin: 'https://www.linkedin.com/in/harsimran-passi/',
+      linkedin: ORG_LINKEDIN,
       instagram: ORG_INSTAGRAM,
     },
   },

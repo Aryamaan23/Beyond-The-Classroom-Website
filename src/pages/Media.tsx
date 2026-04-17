@@ -1,15 +1,29 @@
 import { PageHero, PageTransition } from '../components/common';
 
-const bharatYuvaReels = [
-  'DVP91lMkWsx',
-  'DV-sYbdERU3',
-  'DWRThDXCddw',
-  'DVioXN3k5jX',
-  'DVshk0UEWYD',
-  'DVsy2r4kbiU',
-  'DWBPzbKkZPY',
-  'DV-s5BDEUR3',
-  'DVvzmkVEYWF',
+const bharatYuvaCoveragePosts = [
+  { id: 'DVP91lMkWsx', type: 'reel' as const },
+  { id: 'DV-sYbdERU3', type: 'reel' as const },
+  { id: 'DWRThDXCddw', type: 'reel' as const },
+  { id: 'DVioXN3k5jX', type: 'reel' as const },
+  { id: 'DVshk0UEWYD', type: 'reel' as const },
+  { id: 'DVsy2r4kbiU', type: 'reel' as const },
+  { id: 'DWBPzbKkZPY', type: 'reel' as const },
+  { id: 'DV-s5BDEUR3', type: 'reel' as const },
+  { id: 'DVvzmkVEYWF', type: 'reel' as const },
+];
+
+const summitCoveragePosts = [
+  { id: 'DWoR-trkgyC', type: 'post' as const },
+  { id: 'DWZFafDimPF', type: 'post' as const },
+];
+
+const udayanCareCoveragePosts = [
+  { id: 'DUvY8i1EpRQ', type: 'reel' as const },
+  { id: 'DTsamJ8Eunj', type: 'reel' as const },
+];
+
+const dholpurDriveCoveragePosts = [
+  { id: 'DUnqln_knJy', type: 'reel' as const },
 ];
 
 function Media() {
@@ -39,12 +53,93 @@ function Media() {
               </div>
               <div className="w-full bg-black/5 p-4 sm:p-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {bharatYuvaReels.map((reelId) => (
-                    <div key={reelId} className="rounded-xl overflow-hidden shadow-lg bg-white">
+                  {bharatYuvaCoveragePosts.map((item) => (
+                    <div key={item.id} className="rounded-xl overflow-hidden shadow-lg bg-white">
                       <iframe
-                        title={`Bharat Yuva Instagram Reel ${reelId}`}
-                        src={`https://www.instagram.com/reel/${reelId}/embed`}
+                        title={`Bharat Yuva Instagram ${item.type} ${item.id}`}
+                        src={`https://www.instagram.com/${item.type === 'post' ? 'p' : 'reel'}/${item.id}/embed`}
                         className="w-full h-[680px]"
+                        allowFullScreen
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="mb-12 sm:mb-16">
+            <div className="rounded-2xl bg-white border border-primary/10 shadow-card overflow-hidden">
+              <div className="p-5 sm:p-7 border-b border-primary/10">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  180 Degrees Consulting SRMIST Chennai Summit
+                </h3>
+                <p className="mt-2 text-gray-600 text-sm sm:text-base">
+                  Instagram highlights from the summit coverage.
+                </p>
+              </div>
+              <div className="w-full bg-black/5 p-4 sm:p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  {summitCoveragePosts.map((item) => (
+                    <div key={item.id} className="rounded-xl overflow-hidden shadow-lg bg-white">
+                      <iframe
+                        title={`180 Degrees Consulting SRMIST Chennai Summit Instagram ${item.type} ${item.id}`}
+                        src={`https://www.instagram.com/${item.type === 'post' ? 'p' : 'reel'}/${item.id}/embed`}
+                        className="w-full h-[720px]"
+                        allowFullScreen
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="mb-12 sm:mb-16">
+            <div className="rounded-2xl bg-white border border-primary/10 shadow-card overflow-hidden">
+              <div className="p-5 sm:p-7 border-b border-primary/10">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Udayan Care Initiative
+                </h3>
+                <p className="mt-2 text-gray-600 text-sm sm:text-base">
+                  Instagram highlights from the Udayan Care initiative.
+                </p>
+              </div>
+              <div className="w-full bg-black/5 p-4 sm:p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  {udayanCareCoveragePosts.map((item) => (
+                    <div key={item.id} className="rounded-xl overflow-hidden shadow-lg bg-white">
+                      <iframe
+                        title={`Udayan Care Initiative Instagram ${item.type} ${item.id}`}
+                        src={`https://www.instagram.com/${item.type === 'post' ? 'p' : 'reel'}/${item.id}/embed`}
+                        className="w-full h-[720px]"
+                        allowFullScreen
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="mb-12 sm:mb-16">
+            <div className="rounded-2xl bg-white border border-primary/10 shadow-card overflow-hidden">
+              <div className="p-5 sm:p-7 border-b border-primary/10">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Dholpur Drive
+                </h3>
+                <p className="mt-2 text-gray-600 text-sm sm:text-base">
+                  Instagram coverage from Dholpur Drive and district immersion moments.
+                </p>
+              </div>
+              <div className="w-full bg-black/5 p-4 sm:p-6">
+                <div className="w-full">
+                  {dholpurDriveCoveragePosts.map((item) => (
+                    <div key={item.id} className="rounded-xl overflow-hidden shadow-lg bg-white">
+                      <iframe
+                        title={`Dholpur Drive Instagram ${item.type} ${item.id}`}
+                        src={`https://www.instagram.com/${item.type === 'post' ? 'p' : 'reel'}/${item.id}/embed`}
+                        className="w-full h-[720px]"
                         allowFullScreen
                       />
                     </div>

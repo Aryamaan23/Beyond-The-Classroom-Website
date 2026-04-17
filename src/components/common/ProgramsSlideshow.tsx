@@ -47,7 +47,7 @@ function ProgramsSlideshow({
         <LazyImage
           src={activeProgram.image}
           alt={activeProgram.title}
-          className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+          className="absolute inset-0 h-full w-full object-cover object-[center_25%] transition-opacity duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/25" aria-hidden="true" />
 

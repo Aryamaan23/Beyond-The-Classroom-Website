@@ -385,7 +385,22 @@ export const programs = [
       'Leadership Orientation Workshops',
       'Community Participation and Reflection'
     ]
-  }
+  },
+  {
+    title: '180 Degrees Consulting SRMIST KTR Chennai Summit',
+    description:
+      'A summit-led leadership and consulting exposure initiative in Chennai, designed to connect youth with problem-solving frameworks, impact consulting perspectives, and collaborative action.',
+    image: '/images/programs/bharat-yuva-2026-1.png',
+    ctaText: 'View Summit Highlights',
+    ctaLink: '/media',
+    features: [
+      'Summit Sessions with Practitioners',
+      'Youth Consulting and Case Discussions',
+      'Cross-Campus Collaboration and Networking',
+      'Leadership and Public Impact Dialogues',
+      'Action-Oriented Learning for Changemakers'
+    ]
+  },
 ];
 
 export const missionStatement = 'Empower young people and women to turn their ideas into meaningful, lasting change through confidence, skills, and opportunities.';
